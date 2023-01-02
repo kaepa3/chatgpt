@@ -62,21 +62,19 @@ func doJson(client gpt3.Client, r io.Reader, w io.Writer) error {
 }
 
 func readConfig() {
-	err := godotenv.Load()
-	if err == nil {
-		return
+	fName := ".chatgpt"
+	paths := []string{
+		filepath.Join(".env"),
+		filepath.Join(os.Getenv("HOME"), fName),
+		filepath.Join(os.Getenv("HOMEPATH"), fName),
 	}
-	err = godotenv.Load("~/.chatgpt")
-	if err == nil {
-		return
+	for _, v := range paths {
+		if err := godotenv.Load(v); err == nil {
+			return
+		}
+		log.Println(v)
 	}
-	path := os.Getenv("HOMEPATH")
-	envPath := filepath.Join(path, ".chatgpt")
-	err = godotenv.Load(envPath)
-	if err != nil {
-		log.Println("Error loading .env file", err.Error())
-	}
-
+	log.Println("Error loading .env file", paths)
 	return
 }
 
