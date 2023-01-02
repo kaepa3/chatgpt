@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/PullRequestInc/go-gpt3"
 	"github.com/joho/godotenv"
@@ -66,9 +67,16 @@ func readConfig() {
 		return
 	}
 	err = godotenv.Load("~/.chatgpt")
-	if err != nil {
-		log.Println("Error loading .env file")
+	if err == nil {
+		return
 	}
+	path := os.Getenv("HOMEPATH")
+	envPath := filepath.Join(path, ".chatgpt")
+	err = godotenv.Load(envPath)
+	if err != nil {
+		log.Println("Error loading .env file", err.Error())
+	}
+
 	return
 }
 
