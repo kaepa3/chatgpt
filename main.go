@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"github.com/PullRequestInc/go-gpt3"
+	"github.com/joho/godotenv"
 )
 
 type payload struct {
@@ -59,11 +60,19 @@ func doJson(client gpt3.Client, r io.Reader, w io.Writer) error {
 	}
 }
 
+func readConfig() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Error loading .env file")
+	}
+}
+
 func main() {
 	var j bool
 	flag.BoolVar(&j, "json", false, "json input/output")
 	flag.Parse()
 
+	readConfig()
 	apiKey := os.Getenv("CHATGPT_API_KEY")
 	if apiKey == "" {
 		log.Fatal("Missing CHATGPT_API KEY")
